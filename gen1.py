@@ -40,10 +40,17 @@ class CQ(object):
     """Represents a randomly generated CQ.
 
     This is part of the information of a spot."""
+
+    latest = list()
+
     def __init__(self):
         self.freq = generate_frequency()
         self.call = generate_call()
         self.speed = str(r.randint(17, 40))
+        CQ.latest.append(self)
+        new_latest_list_length = r.randint(10, 100)
+        if new_latest_list_length < len(CQ.latest):
+            CQ.latest = r.sample(CQ.latest, new_latest_list_length)
 
 # Create a socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -82,19 +89,20 @@ try:
 
             # Echo back the same data you just received
             try:
-                for x in range(100):
-                    cq = CQ()
+                CQ()
+                spotter = generate_call()
+                for cq in r.sample(CQ.latest, r.randint(1, len(CQ.latest))):
                     newSocket.send("DX de {spotter}-#:   {freq}  {dx}       CW  {db} dB   {speed} WPM  CQ   {time}Z\r\n".format(
-                        spotter=generate_call(),
+                        spotter=spotter,
                         freq=cq.freq,
                         dx=cq.call,
                         db=str(r.randint(10, 25)),
                         speed=cq.speed,
                         time=strftime("%H%M", gmtime())).encode())
-                    blocking_sleep_time = 0.1
                     count += 1
                     if count % 100000 == 0:
                         print("Sent", count, "spots")
+                    blocking_sleep_time = 0.1
             except BlockingIOError:
                 sleep(blocking_sleep_time)
                 print("Blocked waiting", blocking_sleep_time)
