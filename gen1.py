@@ -1,3 +1,8 @@
+description = """Simulates a DXCluster with a massive amount of generated spots.
+
+These are not real spots, these are randomly generated both in turns
+of call, frequency and spotter."""
+
 import random
 import socket
 import string
@@ -42,15 +47,18 @@ well_known_port = 8881
 sock.bind(('', well_known_port))
 
 # Set the number of clients waiting for connection that can be queued
-sock.listen(5)
+sock.listen(1)
+
+print(description)
+print("Listening on port", well_known_port)
 
 # loop waiting for connections (terminate with Ctrl-C)
 try:
     while 1:
         newSocket, address = sock.accept(  )
         # loop serving the new client
-        newSocket.send(b"This is a generator for random spots.\n")
-        newSocket.send(b"Call: ")
+        newSocket.send(description.encode())
+        newSocket.send(b"\nCall: ")
         receivedData = newSocket.recv(1024) 
         print("Connected from", address, "by", receivedData.decode().strip())
         newSocket.setblocking(False)
