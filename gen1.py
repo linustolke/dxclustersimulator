@@ -75,12 +75,12 @@ try:
             try:
                 for x in range(100):
                     newSocket.send("DX de {spotter}-#:   {freq}  {dx}       CW  {db} dB   {speed} WPM  CQ   {time}Z\r\n".format(
+                        spotter=call(),
                         freq=freq(),
-                        time=strftime("%H%M", gmtime()),
+                        dx=call(),
                         db=str(r.randint(10, 25)),
                         speed=str(r.randint(17, 40)),
-                        spotter=call(),
-                        dx=call()).encode())
+                        time=strftime("%H%M", gmtime())).encode())
                     blocking_sleep_time = 0.1
                     count += 1
                     if count % 100000 == 0:
