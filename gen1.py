@@ -36,13 +36,14 @@ def generate_call():
             r.choice(string.ascii_uppercase) +
             r.choice(string.ascii_uppercase))
 
-def generate_new_cq():
-    """Returns a cq.
+class CQ(object):
+    """Represents a randomly generated CQ.
 
-A tuple of strings representing someone sending. This is part of 
-the information of a spot."""
-    global r
-    return generate_frequency(), generate_call(), str(r.randint(17, 40))
+    This is part of the information of a spot."""
+    def __init__(self):
+        self.freq = generate_frequency()
+        self.call = generate_call()
+        self.speed = str(r.randint(17, 40))
 
 # Create a socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -82,13 +83,13 @@ try:
             # Echo back the same data you just received
             try:
                 for x in range(100):
-                    freq, dx, speed = generate_new_cq()
+                    cq = CQ()
                     newSocket.send("DX de {spotter}-#:   {freq}  {dx}       CW  {db} dB   {speed} WPM  CQ   {time}Z\r\n".format(
                         spotter=generate_call(),
-                        freq=freq,
-                        dx=dx,
+                        freq=cq.freq,
+                        dx=cq.call,
                         db=str(r.randint(10, 25)),
-                        speed=speed,
+                        speed=cq.speed,
                         time=strftime("%H%M", gmtime())).encode())
                     blocking_sleep_time = 0.1
                     count += 1
